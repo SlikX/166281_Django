@@ -1,3 +1,6 @@
+import datetime
+from django.utils import timezone
+
 from django.db import models
 
 # Create your models here.
@@ -10,6 +13,11 @@ SHIRT_SIZES = (
         ('M', 'Medium'),
         ('L', 'Large'),
     )
+
+GENDERS = [
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+]
 
 
 class Team(models.Model):
@@ -29,6 +37,29 @@ class Person(models.Model):
 
     def __str__(self):
         return self.name
+
+class Stanowisko(models.Model):
+    nazwa = models.CharField(max_length=60)
+    opis = models.CharField(max_length=60, blank=True)
+
+    def __str__(self):
+        return self.nazwa
+
+class Osoba(models.Model):
+    GENDERS = [
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+    ]
+
+    imie = models.CharField(max_length=60)
+    nazwisko = models.CharField(max_length=60)
+    plec = models.CharField(max_length=10, choices=GENDERS, default=GENDERS[0][0])
+    stanowisko = models.ForeignKey(Stanowisko, null=True, blank=True, on_delete=models.SET_NULL)
+    data_dodania = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return self.imie
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
