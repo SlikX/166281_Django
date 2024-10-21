@@ -46,6 +46,11 @@ class Stanowisko(models.Model):
         return self.nazwa
 
 class Osoba(models.Model):
+    class Plec(models.IntegerChoices):
+        FEMALE = 1, 'Kobieta'
+        MALE = 2, 'Mężczyzna'
+        OTHER = 3, 'Inne'
+
     GENDERS = [
         ('Male', 'Male'),
         ('Female', 'Female'),
@@ -53,13 +58,18 @@ class Osoba(models.Model):
 
     imie = models.CharField(max_length=60)
     nazwisko = models.CharField(max_length=60)
-    plec = models.CharField(max_length=10, choices=GENDERS, default=GENDERS[0][0])
+    # plec = models.CharField(max_length=10, choices=GENDERS, default=GENDERS[0][0])
+    plec = models.IntegerField(choices=Plec.choices, null=False, blank=False)
     stanowisko = models.ForeignKey(Stanowisko, null=True, blank=True, on_delete=models.SET_NULL)
     data_dodania = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['nazwisko']
+        unique_together = (('imie', 'nazwisko'),)
+
 
     def __str__(self):
-        return self.imie
+        return f"{self.imie} {self.nazwisko}"
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
